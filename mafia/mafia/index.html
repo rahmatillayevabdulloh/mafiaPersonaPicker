@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mafia Game Role Distributor - Assign roles secretly and play the classic Mafia party game with friends.">
+  <title>Mafia — Role Distributor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <div class="particles" id="particles"></div>
+
+  
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loading-text">Shuffling roles<span class="dots"></span></p>
+    </div>
+  </div>
+
+  
+  <div class="app-container">
+    
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="32" cy="20" r="12" fill="currentColor" opacity="0.9"/>
+            <path d="M10 58c0-12.15 9.85-22 22-22s22 9.85 22 22" stroke="currentColor" stroke-width="4" fill="none" opacity="0.7"/>
+            <circle cx="28" cy="18" r="2" fill="#0a0a0f"/>
+            <circle cx="36" cy="18" r="2" fill="#0a0a0f"/>
+            <path d="M20 8 Q32 -2 44 8" stroke="currentColor" stroke-width="3" fill="none" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>MAFIA</h1>
+          <span class="logo-subtitle">Role Distributor</span>
+        </div>
+      </div>
+      <button class="btn-icon" id="btnSound" title="Toggle Sound" aria-label="Toggle sound effects">
+        <svg id="soundOn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        <svg id="soundOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+      </button>
+    </header>
+
+    
+    <div class="steps-indicator">
+      <div class="step active" data-step="1">
+        <div class="step-circle">1</div>
+        <span class="step-label">Players</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-step="2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Roles</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-step="3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Reveal</span>
+      </div>
+    </div>
+
+    
+    <section class="screen active" id="screenSetup">
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2>How many players?</h2>
+          <p class="subtitle">Enter the number of players to get started</p>
+        </div>
+        <div class="player-count-wrapper">
+          <button class="btn-stepper" id="btnMinus" aria-label="Decrease player count">−</button>
+          <input type="number" id="playerCount" class="input-count" min="4" max="20" value="6" aria-label="Number of players">
+          <button class="btn-stepper" id="btnPlus" aria-label="Increase player count">+</button>
+        </div>
+        <div class="player-names-container" id="playerNamesContainer">
+          
+        </div>
+        <button class="btn-primary" id="btnToRoles">
+          <span>Continue to Roles</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    
+    <section class="screen" id="screenRoles">
+      <div class="card glass-card">
+        <div class="card-header">
+          <h2>Select Roles</h2>
+          <p class="subtitle">Choose roles and set quantities to match <strong id="totalPlayersLabel">6</strong> players</p>
+        </div>
+        <div class="role-counter-bar" id="roleCounterBar">
+          <span>Roles assigned: <strong id="assignedCount">0</strong> / <strong id="neededCount">6</strong></span>
+        </div>
+        <div class="roles-grid" id="rolesGrid">
+          
+        </div>
+        <div class="validation-error" id="validationError">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="validationMsg"></span>
+        </div>
+
+        
+        <div class="options-section">
+          <label class="toggle-option" id="toggleOnceLabel">
+            <span class="toggle-text">
+              <strong>One-time Reveal</strong>
+              <small>Players can only view their role once</small>
+            </span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="toggleOnce">
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+          <label class="toggle-option" id="toggleTimerLabel">
+            <span class="toggle-text">
+              <strong>Auto-hide Timer</strong>
+              <small>Role auto-hides after 5 seconds</small>
+            </span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="toggleTimer" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-secondary" id="btnBackToSetup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>Back</span>
+          </button>
+          <button class="btn-primary" id="btnStartGame">
+            <span>Start Game</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="screen" id="screenReveal">
+      <div class="card glass-card reveal-card">
+        <div class="card-header">
+          <h2>Tap to Reveal</h2>
+          <p class="subtitle">Pass the device to each player — tap your name to see your role</p>
+        </div>
+        <div class="reveal-grid" id="revealGrid">
+          
+        </div>
+        <button class="btn-primary restart-btn" id="btnRestart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <span>New Game</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  
+  <div class="modal-overlay" id="roleModal">
+    <div class="modal-card" id="modalCard">
+      <div class="modal-inner">
+        <div class="modal-front">
+          <div class="modal-icon" id="modalIcon"></div>
+          <h3 class="modal-player-name" id="modalPlayerName"></h3>
+          <p class="modal-hint">Tap to reveal your role</p>
+        </div>
+        <div class="modal-back">
+          <div class="modal-role-icon" id="modalRoleIcon"></div>
+          <h3 class="modal-role-name" id="modalRoleName"></h3>
+          <p class="modal-role-desc" id="modalRoleDesc"></p>
+          <div class="timer-bar" id="timerBar">
+            <div class="timer-fill" id="timerFill"></div>
+          </div>
+          <button class="btn-close-modal" id="btnCloseModal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
